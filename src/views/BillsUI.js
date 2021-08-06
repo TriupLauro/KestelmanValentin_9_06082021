@@ -20,7 +20,21 @@ const row = (bill) => {
   }
 
 const rows = (data) => {
-  return (data && data.length) ? data.map(bill => row(bill)).join("") : ""
+    data = sortDate(data)
+    return (data && data.length) ? data.map(bill => row(bill)).join("") : ""
+}
+
+const sortDate = (billsArray) => {
+    const dateArray = billsArray.map(item => new Date(item.date))
+    const dateArrayWithIndex = []
+
+    for (let date of dateArray) {
+        dateArrayWithIndex.push({index : dateArray.indexOf(date), date})
+    }
+
+    const sortedArray = dateArrayWithIndex.sort((a,b) => b.date - a.date)
+
+    return sortedArray.map(item => billsArray[item.index]);
 }
 
 export default ({ data: bills, loading, error }) => {
