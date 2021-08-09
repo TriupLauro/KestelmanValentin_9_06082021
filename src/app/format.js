@@ -1,5 +1,7 @@
 export const formatDate = (dateStr) => {
   const date = new Date(dateStr)
+  //In case we get an invalid date string (like '', or not YYYY-MM-DD)
+  if (!isFinite(date)) return dateStr
   const ye = new Intl.DateTimeFormat('fr', { year: 'numeric' }).format(date)
   const mo = new Intl.DateTimeFormat('fr', { month: 'short' }).format(date)
   const da = new Intl.DateTimeFormat('fr', { day: '2-digit' }).format(date)
