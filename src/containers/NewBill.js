@@ -19,6 +19,16 @@ export default class NewBill {
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
+    const fileNameSplit = fileName.split('.')
+    const fileExtension = fileNameSplit[fileNameSplit.length -1].toLowerCase()
+    const validExtensions = ['png','jpg','jpeg']
+    if (validExtensions.includes(fileExtension)) {
+      console.log("Format d'image supporté")
+    }else{
+      console.log("Format d'image non supporté")
+      e.target.value = null
+    }
+    if (!this.firestore) return
     this.firestore
       .storage
       .ref(`justificatifs/${fileName}`)
