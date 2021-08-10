@@ -1,6 +1,7 @@
 import { screen } from "@testing-library/dom"
 import BillsUI from "../views/BillsUI.js"
 import { bills } from "../fixtures/bills.js"
+import '@testing-library/jest-dom/extend-expect'
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
@@ -12,7 +13,7 @@ describe("Given I am connected as an employee", () => {
       document.body.innerHTML = html
       //to-do write expect expression
       const billIcon = screen.getByTestId('icon-window')
-      expect(billIcon.classList.contains('active-icon')).toBeTruthy()
+      expect(billIcon).toHaveClass('active-icon')
     })
     test("Then bills should be ordered from earliest to latest", () => {
       const html = BillsUI({ data: bills })

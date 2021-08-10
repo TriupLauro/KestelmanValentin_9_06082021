@@ -1,6 +1,7 @@
 import VerticalLayout from './VerticalLayout.js'
 import ErrorPage from "./ErrorPage.js"
 import LoadingPage from "./LoadingPage.js"
+import {parseFrenchDate} from "../app/format.js";
 
 import Actions from './Actions.js'
 
@@ -20,27 +21,27 @@ const row = (bill) => {
   }
 
 const rows = (data) => {
-    if (data) {
-        data = sortDate(data)
-    }
     return (data && data.length) ? data.map(bill => row(bill)).join("") : ""
 }
 
 const sortDate = (billsArray) => {
-    const dateArray = billsArray.map(item => new Date(item.date))
-    const dateArrayWithIndex = []
-
-    for (let date of dateArray) {
-        dateArrayWithIndex.push({index : dateArray.indexOf(date), date})
-    }
-
-    const sortedArray = dateArrayWithIndex.sort((a,b) => b.date - a.date)
-
-    return sortedArray.map(item => billsArray[item.index]);
+    const dateArrayWithIndex = billsArray.map(item => {
+        return {
+            index: billsArray.indexOf(item),
+            date : parseFrenchDate(item.date)
+        }
+    })
+    const sortedDateArray = dateArrayWithIndex.sort(antiChrono)
+    return sortedDateArray.map(item => billsArray[item.index])
 }
 
+const antiChrono = (a, b) => ((a.date < b.date) ? 1 : -1)
+
 export default ({ data: bills, loading, error }) => {
-  
+
+  let sortedBills
+  bills ? sortedBills = sortDate(bills) : console.log('Factures non chargées')
+
   const modal = () => (`
     <div class="modal fade" id="modaleFile" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -85,7 +86,7 @@ export default ({ data: bills, loading, error }) => {
               </tr>
           </thead>
           <tbody data-testid="tbody">
-            ${rows(bills)}
+            ${rows(sortedBills)}
           </tbody>
           </table>
         </div>
