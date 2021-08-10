@@ -20,14 +20,16 @@ export const formatStatus = (status) => {
   }
 }
 
-export const parseFrenchDate = (frenchDate) => {
-  if (!/((\d)|([1-2]\d)|(3[0-1]))\s((Jan)|(Fév)|(Mar)|(Avr)|(Mai)|(Jui)|(Aoû)|(Sep)|(Oct)|(Nov)|(Déc))\.\s\d{2}/.test(frenchDate)) {
-    //In case it's not formated like a French Date
-    const dateObj = new Date(frenchDate)
-    if (isFinite(dateObj)) return dateObj
-    //We couldn't parse the date so we leave it at the end
-    return -1000000000000000000000
-  }
+export const customParseDate = (dateStr) => {
+  if (/((\d)|([1-2]\d)|(3[0-1]))\s((Jan)|(Fév)|(Mar)|(Avr)|(Mai)|(Jui)|(Aoû)|(Sep)|(Oct)|(Nov)|(Déc))\.\s\d{2}/.test(dateStr)) return parseFrenchDate(dateStr)
+  if (/\d{2}-\d{2}-\d{4}/.test(dateStr)) return parseFrenchNumberDate(dateStr)
+  const dateObj = new Date(dateStr)
+  if (isFinite(dateObj)) return dateObj
+  //We couldn't parse the date so we leave it at the end
+  return -1000000000000000000000
+}
+
+const parseFrenchDate = (frenchDate) => {
   const splitDate = frenchDate.split(' ')
   const monthFr = splitDate[1].slice(0,3)
   const day = splitDate[0]
@@ -57,4 +59,13 @@ export const parseFrenchDate = (frenchDate) => {
   }
   const updatedDateString = `${day} ${monthEn} ${year}`
   return new Date(updatedDateString)
+}
+
+const parseFrenchNumberDate = (numberDate) => {
+  const splitNumberDate = numberDate.split('-')
+  const day = splitNumberDate[0]
+  const month = splitNumberDate[1]
+  const year = splitNumberDate[2]
+  const reorderedDate = `${year} ${month} ${day}`
+  return new Date(reorderedDate)
 }

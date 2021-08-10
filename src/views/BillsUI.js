@@ -1,7 +1,7 @@
 import VerticalLayout from './VerticalLayout.js'
 import ErrorPage from "./ErrorPage.js"
 import LoadingPage from "./LoadingPage.js"
-import {parseFrenchDate} from "../app/format.js";
+import {customParseDate} from "../app/format.js";
 
 import Actions from './Actions.js'
 
@@ -28,7 +28,7 @@ const sortDate = (billsArray) => {
     const dateArrayWithIndex = billsArray.map(item => {
         return {
             index: billsArray.indexOf(item),
-            date : parseFrenchDate(item.date)
+            date : customParseDate(item.date)
         }
     })
     const sortedDateArray = dateArrayWithIndex.sort(antiChrono)
