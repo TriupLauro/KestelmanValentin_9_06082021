@@ -4,6 +4,7 @@ import { bills } from "../fixtures/bills.js"
 import '@testing-library/jest-dom/extend-expect'
 import userEvent from '@testing-library/user-event'
 import Bills from "../containers/Bills.js";
+import {ROUTES} from "../constants/routes.js";
 
 describe("Given I am connected as an employee", () => {
   describe('When the bills page is loading', ()=> {
@@ -16,6 +17,31 @@ describe("Given I am connected as an employee", () => {
     test('Then an error should be displayed', () => {
       document.body.innerHTML = BillsUI({error: 'some error message'})
       expect(screen.getAllByText('Erreur')).toBeTruthy()
+    })
+  })
+  describe('When I click on the new Bill button', () => {
+    test('Then I should navigate to the new Bill Form', () => {
+      document.body.innerHTML = BillsUI({ data: []})
+
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname })
+      }
+
+      const bill = new Bills({
+        document,
+        onNavigate
+      })
+
+      const newBillBtn = screen.getByRole('button')
+      const handleBtnClick = jest.fn(bill.handleClickNewBill)
+      newBillBtn.addEventListener('click', handleBtnClick)
+
+      userEvent.click(newBillBtn)
+      expect(handleBtnClick).toHaveBeenCalled()
+    })
+
+    test("And it should renders the new bill form", () => {
+      expect(screen.getAllByText('Envoyer une note de frais')).toBeTruthy()
     })
   })
   describe("When I am on Bills Page", () => {
