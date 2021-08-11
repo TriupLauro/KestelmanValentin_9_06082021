@@ -5,3 +5,7 @@
 #download {
   cursor: pointer;
 }
+
+#eye.disabled {
+  cursor: default;
+}

@@ -74,6 +74,7 @@ describe("Given I am connected as an employee", () => {
     })
     test("Then by clicking on the blue eye icon, a modal should open",() =>{
       document.body.innerHTML = BillsUI({data: bills})
+
       const blueEyeIcon = screen.getAllByTestId('icon-eye')[0]
       expect(blueEyeIcon).toBeTruthy()
 
