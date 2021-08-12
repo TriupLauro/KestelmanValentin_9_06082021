@@ -27,7 +27,7 @@ export default class {
     const modalElt = $('#modaleFile')
     const imgWidth = Math.floor(modalElt.width() * 0.5)
     modalElt.find(".modal-body").html(`<div style='text-align: center;'><img width=${imgWidth} src=${billUrl} /></div>`)
-    modalElt.modal('show')
+    if (typeof modalElt.modal === 'function') modalElt.modal('show')
   }
 
   // not need to cover this function by tests

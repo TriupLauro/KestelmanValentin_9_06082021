@@ -5,6 +5,7 @@ import '@testing-library/jest-dom/extend-expect'
 import userEvent from '@testing-library/user-event'
 import Bills from "../containers/Bills.js";
 import {ROUTES} from "../constants/routes.js";
+import firebase from "../__mocks__/firebase";
 
 describe("Given I am connected as an employee", () => {
   describe('When the bills page is loading', ()=> {
@@ -75,17 +76,30 @@ describe("Given I am connected as an employee", () => {
     test("Then by clicking on the blue eye icon, a modal should open",() =>{
       document.body.innerHTML = BillsUI({data: bills})
 
-      const blueEyeIcon = screen.getAllByTestId('icon-eye')[0]
-      expect(blueEyeIcon).toBeTruthy()
+      const blueEyeIconList = screen.getAllByTestId('icon-eye')
+      const blueEyeIcon = blueEyeIconList[1]
 
       const bill = new Bills({document})
       const handleClickIconEye = jest.fn(e => bill.handleClickIconEye(blueEyeIcon))
       expect(blueEyeIcon).toHaveAttribute('data-bill-url')
+      expect(blueEyeIcon.dataset.billUrl).toBe(bills[2].fileUrl)
       blueEyeIcon.addEventListener('click',handleClickIconEye)
 
       userEvent.click(blueEyeIcon)
       expect(handleClickIconEye).toHaveBeenCalled()
+      //We do not test the bootstrap modal istelf
+    })
+  })
+})
 
+// test d'intégration GET
+describe("Given I am a user connected as employee", () => {
+  describe("When I navigate to Bills page", () => {
+    test("fetches bills from mock API GET", async () => {
+      const getSpy = jest.spyOn(firebase, "get")
+      const bills = await firebase.get()
+      expect(getSpy).toHaveBeenCalledTimes(1)
+      expect(bills.data.length).toBe(4)
     })
   })
 })

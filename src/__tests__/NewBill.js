@@ -7,6 +7,7 @@ import '@testing-library/jest-dom/extend-expect'
 import {ROUTES} from "../constants/routes.js";
 import {localStorageMock} from "../__mocks__/localStorage.js";
 
+
 describe("Given I am connected as an employee", () => {
   describe("When I am on NewBill Page", () => {
     test("Then I can try to upload an image", () => {
@@ -69,19 +70,19 @@ describe("Given I am connected as an employee", () => {
 
         const datePicker = screen.getByLabelText('Date')
         fireEvent.change(datePicker,{target: {value: '2020-05-24'}})
-        expect(datePicker.value).toBe('2020-05-24')
+        expect(datePicker).toHaveValue('2020-05-24')
 
         const amountInput = screen.getByLabelText('Montant TTC')
         userEvent.type(amountInput,'1')
-        expect(amountInput.value).toBe('1')
+        expect(amountInput).toHaveValue(1)
 
         const vatInput = screen.getByLabelText('TVA')
         userEvent.type(vatInput,'15')
-        expect(vatInput.value).toBe('15')
+        expect(vatInput).toHaveValue(15)
 
         const commentaryInput = screen.getByLabelText('Commentaire')
         userEvent.type(commentaryInput,'Ceci est un test automatisé')
-        expect(commentaryInput.value).toBe('Ceci est un test automatisé')
+        expect(commentaryInput).toHaveValue('Ceci est un test automatisé')
     })
     test('And submit it',()=>{
         const onNavigate = (pathname) => {
@@ -90,7 +91,7 @@ describe("Given I am connected as an employee", () => {
 
         Object.defineProperty(window, "localStorage",{
             value :localStorageMock,
-            writable: true
+            //writable: true
         })
         window.localStorage.setItem('user',JSON.stringify({email : 'johndoe@email.com'}))
 
@@ -115,3 +116,16 @@ describe("Given I am connected as an employee", () => {
     })
   })
 })
+
+// test d'intégration Post
+describe("Given I am a user connected as employee", () => {
+    describe("When I navigate to the NewBill form", () => {
+        test("Then I can send a post request", async () => {
+            const mockPostFirebase = jest.fn().mockResolvedValue('This is a POST request')
+            const response = await mockPostFirebase()
+            expect(mockPostFirebase).toHaveBeenCalledTimes(1)
+            expect(response).toBe('This is a POST request')
+        })
+    })
+})
+
