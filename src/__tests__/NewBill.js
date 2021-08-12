@@ -43,6 +43,9 @@ describe("Given I am connected as an employee", () => {
       newBill.handleChangeFile(mockEvent)
       expect(mockEvent.target.value).toBe(null)
     })
+    test('And if I try it, an error message is displayed', () => {
+        expect(screen.getByText('Les formats d\'image .jpg .jpeg ou .png sont les seuls acceptés'))
+    })
     test('Then I can submit an image with a valid extension', () => {
       document.body.innerHTML = NewBillUI()
       const fileName = 'sunglasses.jpg'

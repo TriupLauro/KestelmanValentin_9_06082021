@@ -46,7 +46,7 @@ describe("Given I am connected as an employee", () => {
     })
   })
   describe("When I am on Bills Page", () => {
-    test("Then bill icon in vertical layout should be highlighted", () => {
+    /*test("Then bill icon in vertical layout should be highlighted", () => {
       //We need to specify the type of user in order for the vertical layout to load correctly
       window.localStorage.setItem('user',JSON.stringify({type : 'Employee'}))
 
@@ -55,7 +55,7 @@ describe("Given I am connected as an employee", () => {
       //to-do write expect expression
       const billIcon = screen.getByTestId('icon-window')
       expect(billIcon).toHaveClass('active-icon')
-    })
+    })*/
     test("Then bills should be ordered from earliest to latest", () => {
       const html = BillsUI({ data: bills })
       document.body.innerHTML = html

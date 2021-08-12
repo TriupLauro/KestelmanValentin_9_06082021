@@ -22,11 +22,14 @@ export default class NewBill {
     const fileNameSplit = fileName.split('.')
     const fileExtension = fileNameSplit[fileNameSplit.length -1].toLowerCase()
     const validExtensions = ['png','jpg','jpeg']
+    const fileErrorElt = this.document.querySelector('.file-error')
     if (validExtensions.includes(fileExtension)) {
       console.log("Format d'image supporté")
+      fileErrorElt.style.display = 'none'
     }else{
       console.log("Format d'image non supporté")
       e.target.value = null
+      fileErrorElt.style.display = 'block'
     }
     if (!this.firestore) return
     this.firestore
