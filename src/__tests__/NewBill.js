@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event'
 import MockFile from "../__mocks__/mockFile.js";
 import '@testing-library/jest-dom/extend-expect'
 import {ROUTES} from "../constants/routes.js";
-import {localStorageMock} from "../__mocks__/localStorage.js";
+//import {localStorageMock} from "../__mocks__/localStorage.js";
 
 
 describe("Given I am connected as an employee", () => {
@@ -62,6 +62,21 @@ describe("Given I am connected as an employee", () => {
     })
     test('Then I can fill the form', ()=>{
         document.body.innerHTML = NewBillUI()
+
+        const mockFormData = {
+            email : 'johndoe@email.com',
+            type : 'Transports',
+            name : 'Dépense primordiale',
+            amount : 1,
+            date : '2020-05-24',
+            vat : 15,
+            pct : 20,
+            commentary : 'Ceci est un test automatisé',
+            fileUrl : null,
+            fileName : null,
+            status : 'pending'
+        }
+
         const typeMenu = screen.getByLabelText('Type de dépense')
         userEvent.selectOptions(typeMenu,'Transports')
         expect(screen.getByRole('option',{name : 'Transports'}).selected).toBeTruthy()
@@ -69,33 +84,34 @@ describe("Given I am connected as an employee", () => {
 
         const expenseNameInput = screen.getByLabelText('Nom de la dépense')
         userEvent.type(expenseNameInput,'Dépense primordiale')
-        expect(expenseNameInput).toHaveValue('Dépense primordiale')
+        expect(expenseNameInput).toHaveValue(mockFormData.name)
 
         const datePicker = screen.getByLabelText('Date')
         fireEvent.change(datePicker,{target: {value: '2020-05-24'}})
-        expect(datePicker).toHaveValue('2020-05-24')
+        expect(datePicker).toHaveValue(mockFormData.date)
 
         const amountInput = screen.getByLabelText('Montant TTC')
         userEvent.type(amountInput,'1')
-        expect(amountInput).toHaveValue(1)
+        expect(amountInput).toHaveValue(mockFormData.amount)
 
         const vatInput = screen.getByLabelText('TVA')
         userEvent.type(vatInput,'15')
-        expect(vatInput).toHaveValue(15)
+        expect(vatInput).toHaveValue(mockFormData.vat)
 
         const commentaryInput = screen.getByLabelText('Commentaire')
         userEvent.type(commentaryInput,'Ceci est un test automatisé')
-        expect(commentaryInput).toHaveValue('Ceci est un test automatisé')
+        expect(commentaryInput).toHaveValue(mockFormData.commentary)
     })
     test('And submit it',()=>{
         const onNavigate = (pathname) => {
             document.body.innerHTML = ROUTES({ pathname })
         }
 
-        Object.defineProperty(window, "localStorage",{
+        /*Object.defineProperty(window, "localStorage",{
             value :localStorageMock,
-            //writable: true
-        })
+            writable: true
+        })*/
+
         window.localStorage.setItem('user',JSON.stringify({email : 'johndoe@email.com'}))
 
         const newBill = new NewBill({
@@ -104,15 +120,35 @@ describe("Given I am connected as an employee", () => {
             firestore : null,
             localStorage : window.localStorage
         })
+
+        const mockFormData = {
+            email : 'johndoe@email.com',
+            type : 'Transports',
+            name : 'Dépense primordiale',
+            amount : 1,
+            date : '2020-05-24',
+            vat : 15,
+            pct : 20,
+            commentary : 'Ceci est un test automatisé',
+            fileUrl : null,
+            fileName : null,
+            status : 'pending'
+        }
+
+        jest.spyOn(newBill,'createBill')
+
         const newBillForm = screen.getByTestId('form-new-bill')
 
         const handleSubmitForm = jest.fn(newBill.handleSubmit)
         //const mockCreateBill = jest.fn(newBill.createBill)
         newBillForm.addEventListener('submit', handleSubmitForm)
 
+        //Check that we're still in the New Bill form
+        expect(screen.getByText('Envoyer une note de frais')).toBeTruthy()
+
         fireEvent.submit(newBillForm)
         expect(handleSubmitForm).toHaveBeenCalled()
-        //expect(mockCreateBill).toHaveBeenCalled()
+        expect(newBill.createBill).toHaveBeenCalledWith(mockFormData)
     })
     test('And the bills page should render', () => {
         expect(screen.getAllByText('Mes notes de frais')).toBeTruthy()

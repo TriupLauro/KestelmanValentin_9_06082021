@@ -87,7 +87,7 @@ describe("Given I am connected as an employee", () => {
 
       userEvent.click(blueEyeIcon)
       expect(handleClickIconEye).toHaveBeenCalled()
-      //We do not test the bootstrap modal istelf
+      //We do not test the bootstrap modal itself
     })
   })
 })

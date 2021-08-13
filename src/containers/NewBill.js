@@ -24,10 +24,10 @@ export default class NewBill {
     const validExtensions = ['png','jpg','jpeg']
     const fileErrorElt = this.document.querySelector('.file-error')
     if (validExtensions.includes(fileExtension)) {
-      console.log("Format d'image supporté")
+      //console.log("Format d'image supporté")
       fileErrorElt.style.display = 'none'
     }else{
-      console.log("Format d'image non supporté")
+      //console.log("Format d'image non supporté")
       e.target.value = null
       fileErrorElt.style.display = 'block'
     }
@@ -52,7 +52,7 @@ export default class NewBill {
       name:  e.target.querySelector(`input[data-testid="expense-name"]`).value,
       amount: parseInt(e.target.querySelector(`input[data-testid="amount"]`).value),
       date:  e.target.querySelector(`input[data-testid="datepicker"]`).value,
-      vat: e.target.querySelector(`input[data-testid="vat"]`).value,
+      vat: parseInt(e.target.querySelector(`input[data-testid="vat"]`).value),
       pct: parseInt(e.target.querySelector(`input[data-testid="pct"]`).value) || 20,
       commentary: e.target.querySelector(`textarea[data-testid="commentary"]`).value,
       fileUrl: this.fileUrl,
