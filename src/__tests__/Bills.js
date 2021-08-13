@@ -73,22 +73,24 @@ describe("Given I am connected as an employee", () => {
       expect(screen.getByText(`${testBill.amount.toString(10)} €`)).toBeTruthy()
       expect(screen.getByText(testBill.status)).toBeTruthy()
     })
-    test("Then by clicking on the blue eye icon, a modal should open",() =>{
-      document.body.innerHTML = BillsUI({data: bills})
+      describe('When I click on a blue eye icon', () => {
+          test("Then a modal should open",() =>{
+              document.body.innerHTML = BillsUI({data: bills})
 
-      const blueEyeIconList = screen.getAllByTestId('icon-eye')
-      const blueEyeIcon = blueEyeIconList[1]
+              const blueEyeIconList = screen.getAllByTestId('icon-eye')
+              const blueEyeIcon = blueEyeIconList[1]
 
-      const bill = new Bills({document})
-      const handleClickIconEye = jest.fn(e => bill.handleClickIconEye(blueEyeIcon))
-      expect(blueEyeIcon).toHaveAttribute('data-bill-url')
-      expect(blueEyeIcon.dataset.billUrl).toBe(bills[2].fileUrl)
-      blueEyeIcon.addEventListener('click',handleClickIconEye)
+              const bill = new Bills({document})
+              jest.spyOn(bill, 'handleClickIconEye')
 
-      userEvent.click(blueEyeIcon)
-      expect(handleClickIconEye).toHaveBeenCalled()
-      //We do not test the bootstrap modal itself
-    })
+              expect(blueEyeIcon).toHaveAttribute('data-bill-url')
+              expect(blueEyeIcon.dataset.billUrl).toBe(bills[2].fileUrl)
+
+              userEvent.click(blueEyeIcon)
+              expect(bill.handleClickIconEye).toHaveBeenCalledWith(blueEyeIcon)
+              //We do not test the bootstrap modal itself
+          })
+      })
   })
 })
 
