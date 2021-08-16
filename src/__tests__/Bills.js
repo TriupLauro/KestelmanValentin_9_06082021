@@ -67,11 +67,11 @@ describe("Given I am connected as an employee", () => {
     test("Then bill information should be displayed", () =>{
       const testBill = bills[0]
       document.body.innerHTML = BillsUI({data: bills})
-      expect(screen.getByText(testBill.name)).toBeTruthy()
-      expect(screen.getByText(testBill.date)).toBeTruthy()
-      expect(screen.getByText(testBill.type)).toBeTruthy()
-      expect(screen.getByText(`${testBill.amount.toString(10)} €`)).toBeTruthy()
-      expect(screen.getByText(testBill.status)).toBeTruthy()
+      expect(screen.getByText(testBill.name)).toBeInTheDocument()
+      expect(screen.getByText(testBill.date)).toBeInTheDocument()
+      expect(screen.getByText(testBill.type)).toBeInTheDocument()
+      expect(screen.getByText(`${testBill.amount.toString(10)} €`)).toBeInTheDocument()
+      expect(screen.getByText(testBill.status)).toBeInTheDocument()
     })
       describe('When I click on a blue eye icon', () => {
           test("Then a modal should open",() =>{

@@ -7,12 +7,24 @@ import '@testing-library/jest-dom/extend-expect'
 import {ROUTES} from "../constants/routes.js";
 //import {localStorageMock} from "../__mocks__/localStorage.js";
 
+const mockFormData = {
+    email : 'johndoe@email.com',
+    type : 'Services en ligne',
+    name : 'Dépense primordiale',
+    amount : 1,
+    date : '2020-05-24',
+    vat : 15,
+    pct : 20,
+    commentary : 'Ceci est un test automatisé',
+    fileUrl : null,
+    fileName : null,
+    status : 'pending'
+}
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on NewBill Page", () => {
     test("Then I can try to upload an image", () => {
-      const html = NewBillUI()
-      document.body.innerHTML = html
+      document.body.innerHTML = NewBillUI()
 
       const newBill = new NewBill({
           document,
@@ -44,7 +56,7 @@ describe("Given I am connected as an employee", () => {
       expect(mockEvent.target.value).toBe(null)
     })
     test('And if I try it, an error message is displayed', () => {
-        expect(screen.getByText('Les formats d\'image .jpg .jpeg ou .png sont les seuls acceptés'))
+        expect(screen.getByText('Les formats d\'image .jpg .jpeg ou .png sont les seuls acceptés')).toBeInTheDocument()
     })
     test('Then I can submit an image with a valid extension', () => {
       document.body.innerHTML = NewBillUI()
@@ -63,24 +75,11 @@ describe("Given I am connected as an employee", () => {
     test('Then I can fill the form', ()=>{
         document.body.innerHTML = NewBillUI()
 
-        const mockFormData = {
-            email : 'johndoe@email.com',
-            type : 'Transports',
-            name : 'Dépense primordiale',
-            amount : 1,
-            date : '2020-05-24',
-            vat : 15,
-            pct : 20,
-            commentary : 'Ceci est un test automatisé',
-            fileUrl : null,
-            fileName : null,
-            status : 'pending'
-        }
-
         const typeMenu = screen.getByLabelText('Type de dépense')
-        userEvent.selectOptions(typeMenu,'Transports')
-        expect(screen.getByRole('option',{name : 'Transports'}).selected).toBeTruthy()
+        userEvent.selectOptions(typeMenu,'Services en ligne')
+        expect(screen.getByRole('option',{name : 'Transports'}).selected).toBeFalsy()
         expect(screen.getByRole('option',{name : 'Restaurants et bars'}).selected).toBeFalsy()
+        expect(screen.getByRole('option',{name : 'Services en ligne'}).selected).toBeTruthy()
 
         const expenseNameInput = screen.getByLabelText('Nom de la dépense')
         userEvent.type(expenseNameInput,'Dépense primordiale')
@@ -121,20 +120,6 @@ describe("Given I am connected as an employee", () => {
             localStorage : window.localStorage
         })
 
-        const mockFormData = {
-            email : 'johndoe@email.com',
-            type : 'Transports',
-            name : 'Dépense primordiale',
-            amount : 1,
-            date : '2020-05-24',
-            vat : 15,
-            pct : 20,
-            commentary : 'Ceci est un test automatisé',
-            fileUrl : null,
-            fileName : null,
-            status : 'pending'
-        }
-
         jest.spyOn(newBill,'createBill')
 
         const newBillForm = screen.getByTestId('form-new-bill')
@@ -144,14 +129,15 @@ describe("Given I am connected as an employee", () => {
         newBillForm.addEventListener('submit', handleSubmitForm)
 
         //Check that we're still in the New Bill form
-        expect(screen.getByText('Envoyer une note de frais')).toBeTruthy()
+        expect(screen.getByText('Envoyer une note de frais')).toBeInTheDocument()
 
         fireEvent.submit(newBillForm)
         expect(handleSubmitForm).toHaveBeenCalled()
         expect(newBill.createBill).toHaveBeenCalledWith(mockFormData)
     })
     test('And the bills page should render', () => {
-        expect(screen.getAllByText('Mes notes de frais')).toBeTruthy()
+        expect(screen.queryByText('Envoyer une note de frais')).not.toBeInTheDocument()
+        expect(screen.getByText('Mes notes de frais')).toBeInTheDocument()
     })
   })
 })
