@@ -42,7 +42,7 @@ describe("Given I am connected as an employee", () => {
 
       expect(handleChangeFile).toHaveBeenCalled()
     })
-    test('Then I cannot submit an image with an invalid extension', () => {
+    test('Then I cannot submit an image with an invalid extension, and get an error message', () => {
       document.body.innerHTML = NewBillUI()
 
       const mockEvent = {
@@ -54,10 +54,9 @@ describe("Given I am connected as an employee", () => {
       const newBill = new NewBill({document})
       newBill.handleChangeFile(mockEvent)
       expect(mockEvent.target.value).toBe(null)
-    })
-    test('And if I try it, an error message is displayed', () => {
         expect(screen.getByText('Les formats d\'image .jpg .jpeg ou .png sont les seuls acceptés')).toBeInTheDocument()
     })
+
     test('Then I can submit an image with a valid extension', () => {
       document.body.innerHTML = NewBillUI()
       const fileName = 'sunglasses.jpg'
@@ -101,7 +100,9 @@ describe("Given I am connected as an employee", () => {
         userEvent.type(commentaryInput,'Ceci est un test automatisé')
         expect(commentaryInput).toHaveValue(mockFormData.commentary)
     })
-    test('And submit it',()=>{
+    test('Then I can submit the filled form',()=>{
+        document.body.innerHTML = NewBillUI()
+
         const onNavigate = (pathname) => {
             document.body.innerHTML = ROUTES({ pathname })
         }
@@ -120,6 +121,19 @@ describe("Given I am connected as an employee", () => {
             localStorage : window.localStorage
         })
 
+        const typeMenu = screen.getByLabelText('Type de dépense')
+        userEvent.selectOptions(typeMenu,'Services en ligne')
+        const expenseNameInput = screen.getByLabelText('Nom de la dépense')
+        userEvent.type(expenseNameInput,'Dépense primordiale')
+        const datePicker = screen.getByLabelText('Date')
+        fireEvent.change(datePicker,{target: {value: '2020-05-24'}})
+        const amountInput = screen.getByLabelText('Montant TTC')
+        userEvent.type(amountInput,'1')
+        const vatInput = screen.getByLabelText('TVA')
+        userEvent.type(vatInput,'15')
+        const commentaryInput = screen.getByLabelText('Commentaire')
+        userEvent.type(commentaryInput,'Ceci est un test automatisé')
+
         jest.spyOn(newBill,'createBill')
 
         const newBillForm = screen.getByTestId('form-new-bill')
@@ -135,7 +149,29 @@ describe("Given I am connected as an employee", () => {
         expect(handleSubmitForm).toHaveBeenCalled()
         expect(newBill.createBill).toHaveBeenCalledWith(mockFormData)
     })
-    test('And the bills page should render', () => {
+    test("Then I'm sent to the Bills page after submitting the form", () => {
+        document.body.innerHTML = NewBillUI()
+
+        const onNavigate = (pathname) => {
+            document.body.innerHTML = ROUTES({ pathname })
+        }
+
+        window.localStorage.setItem('user',JSON.stringify({email : 'johndoe@email.com'}))
+
+        const newBill = new NewBill({
+            document,
+            onNavigate,
+            firestore : null,
+            localStorage : window.localStorage
+        })
+
+        const newBillForm = screen.getByTestId('form-new-bill')
+
+        //Check that we're still in the New Bill form
+        expect(screen.getByText('Envoyer une note de frais')).toBeInTheDocument()
+
+        fireEvent.submit(newBillForm)
+
         expect(screen.queryByText('Envoyer une note de frais')).not.toBeInTheDocument()
         expect(screen.getByText('Mes notes de frais')).toBeInTheDocument()
     })
