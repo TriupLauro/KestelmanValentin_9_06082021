@@ -30,6 +30,7 @@ export default class NewBill {
       //console.log("Format d'image non supporté")
       e.target.value = null
       fileErrorElt.style.display = 'block'
+      return
     }
     if (!this.firestore) return
     this.firestore
