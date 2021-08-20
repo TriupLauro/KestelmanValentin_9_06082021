@@ -4,7 +4,8 @@ import NewBill from "../containers/NewBill.js"
 import userEvent from '@testing-library/user-event'
 import MockFile from "../__mocks__/mockFile.js";
 import '@testing-library/jest-dom/extend-expect'
-import {ROUTES, ROUTES_PATH} from "../constants/routes.js";
+import {ROUTES} from "../constants/routes.js";
+import BillsUI from "../views/BillsUI";
 //import {localStorageMock} from "../__mocks__/localStorage.js";
 
 const mockFormData = {
@@ -181,7 +182,7 @@ describe("Given I am connected as an employee", () => {
 // test d'intégration Post
 describe("Given I am a user connected as employee", () => {
     describe("When I navigate to the NewBill form", () => {
-        test("Then I can send a post request", () => {
+        test("Then I can send a post request", async () => {
             document.body.innerHTML = NewBillUI()
 
             const onNavigate = (pathname,error) => {
@@ -193,32 +194,41 @@ describe("Given I am a user connected as employee", () => {
                 add : jest.fn().mockImplementation(bill => new Promise(resolve => resolve(`${bill.name} added`)))
             }
 
-            mockFirestore.bills().add(mockFormData)
-                .then(message => {
-                    console.log(message)
-                    onNavigate(ROUTES_PATH['Bills'])
-                    expect(mockFirestore.add).toHaveBeenCalledWith(mockFormData)
-                    expect(screen.getByText('Mes notes de frais')).toBeInTheDocument()
-                })
+            const newBill = new NewBill({
+                document,
+                onNavigate,
+                firestore: mockFirestore,
+                localStorage: window.localStorage
+            })
+
+            await newBill.createBill(mockFormData)
+            expect(mockFirestore.add).toHaveBeenCalledWith(mockFormData)
+            expect(screen.getByText('Mes notes de frais')).toBeInTheDocument()
         })
-        test("Then the post request fails with a 404 error message", () => {
+        test("Then the post request fails with a 404 error message", async () => {
             document.body.innerHTML = NewBillUI()
 
             const onNavigate = (pathname, err) => {
                 document.body.innerHTML = ROUTES({pathname, error : err})
             }
 
+            const error = new Error("Erreur 404")
+
             const mockFirestore = {
                 bills : jest.fn().mockReturnThis(),
-                add : jest.fn().mockImplementation(() => Promise.reject(new Error("Erreur 404")))
+                add : jest.fn().mockImplementation(() => Promise.reject(error))
             }
 
-            mockFirestore.bills().add(mockFormData)
-                .catch(err => {
-                    onNavigate(ROUTES_PATH['Bills'], err)
-                    expect(screen.getByText("Erreur")).toBeInTheDocument()
-                })
+            const newBill = new NewBill({
+                document,
+                onNavigate,
+                firestore: mockFirestore,
+                localStorage: window.localStorage
+            })
 
+            await newBill.createBill(mockFormData)
+            document.body.innerHTML = BillsUI({error})
+            expect(screen.getByText(/Erreur 404/)).toBeInTheDocument()
         })
     })
 })
