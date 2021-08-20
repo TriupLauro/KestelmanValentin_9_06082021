@@ -12,13 +12,13 @@ describe("Given I am connected as an employee", () => {
   describe('When the bills page is loading', () => {
     test('Then the loading page should be rendered', () => {
       document.body.innerHTML = BillsUI({loading: true})
-      expect(screen.getAllByText('Loading...')).toBeTruthy()
+      expect(screen.getByText('Loading...')).toBeInTheDocument()
     })
   })
   describe('When I am the bills page but there is an error', () => {
     test('Then an error should be displayed', () => {
       document.body.innerHTML = BillsUI({error: 'some error message'})
-      expect(screen.getAllByText('Erreur')).toBeTruthy()
+      expect(screen.getByText('Erreur')).toBeInTheDocument()
     })
   })
   describe('When I click on the new Bill button', () => {
