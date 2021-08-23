@@ -148,10 +148,13 @@ export default class {
       this.arrowState[index] = 'closed'
     }
 
+    //Only apply the event listener to the bills that are being displayed by clicking the arrow
     this.filtered.forEach(bill => {
       $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
-      $(`#open-bill${this.activeBill}`).css({ background: '#2A2B35' })
     })
+
+    //When the list contains the bill that's shown on the right, style it with a dark background
+    $(`#open-bill${this.activeBill}`).css({ background: '#2A2B35' })
 
     return bills
 
