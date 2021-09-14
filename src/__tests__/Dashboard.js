@@ -213,6 +213,7 @@ describe("Given I am a user connected as Admin", () => {
        expect(bills.data.length).toBe(4)
     })
     test("fetches bills from an API and fails with 404 message error", async () => {
+      jest.spyOn(firebase, "get")
       firebase.get.mockImplementationOnce(() =>
         Promise.reject(new Error("Erreur 404"))
       )
@@ -222,6 +223,7 @@ describe("Given I am a user connected as Admin", () => {
       expect(message).toBeTruthy()
     })
     test("fetches messages from an API and fails with 500 message error", async () => {
+      jest.spyOn(firebase, "get")
       firebase.get.mockImplementationOnce(() =>
         Promise.reject(new Error("Erreur 500"))
       )

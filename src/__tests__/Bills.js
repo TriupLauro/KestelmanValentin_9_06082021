@@ -104,6 +104,7 @@ describe("Given I am a user connected as employee", () => {
       expect(bills.data.length).toBe(4)
     })
     test("fetches bills from an API and fails with 404 message error", async () => {
+      jest.spyOn(firebase, "get")
       firebase.get.mockImplementation(() =>
           Promise.reject(new Error("Erreur 404"))
       )
