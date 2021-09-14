@@ -103,5 +103,12 @@ describe("Given I am a user connected as employee", () => {
       expect(getSpy).toHaveBeenCalledTimes(1)
       expect(bills.data.length).toBe(4)
     })
+    test("fetches bills from an API and fails with 404 message error", async () => {
+      firebase.get.mockImplementation(() =>
+          Promise.reject(new Error("Erreur 404"))
+      )
+      document.body.innerHTML = await BillsUI({ error: "Erreur 404" })
+      expect(screen.getByText(/Erreur 404/)).toBeInTheDocument()
+    })
   })
 })
